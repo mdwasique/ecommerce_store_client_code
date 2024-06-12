@@ -1,8 +1,22 @@
 import { Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
+import { useLatestProductsQuery } from "../redux/api/productAPI";
+import toast from "react-hot-toast";
+import { Skeleton } from "../components/Loader";
+import { useDispatch } from "react-redux";
+import { CartItem } from "../types/types";
+import { addToCart } from "../redux/reducer/cartReducer";
 
 const Home = () => {
-  const addToCartHandler = () => {};
+  const { data, isLoading, isError } = useLatestProductsQuery("");
+  const dispatch = useDispatch();
+
+  const addToCartHandler = (cartItem: CartItem) => {
+    if (cartItem.stock < 1) return toast.error("Out of Stock");
+    dispatch(addToCart(cartItem));
+  };
+
+  if (isError) toast.error("Canno tfetch posdufs");
   return (
     <div className="home">
       <section></section>
@@ -13,14 +27,21 @@ const Home = () => {
         </Link>
       </h1>
       <main>
-        <ProductCard
-          productId="sfssfdf"
-          name="Macbook"
-          price={4545}
-          stock={444}
-          handler={addToCartHandler}
-          photo="https://m.media-amazon.com/images/I/81xW62KXNhL._SX679_.jpg"
-        />
+        {isLoading ? (
+          <Skeleton width="80vw" />
+        ) : (
+          data?.products.map((i) => (
+            <ProductCard
+              key={i._id}
+              productId={i._id}
+              name={i.name}
+              price={i.price}
+              stock={444}
+              handler={addToCartHandler}
+              photo={i.photo}
+            />
+          ))
+        )}
       </main>
     </div>
   );

@@ -2,24 +2,15 @@ import { useEffect, useState } from "react";
 import { VscError } from "react-icons/vsc";
 import CartItem from "../components/cartItem";
 import { Link } from "react-router-dom";
-
-const cartItems = [
-  {
-    productId: "asasjksjndf",
-    photo: "https://m.media-amazon.com/images/I/81xW62KXNhL._SX679_.jpg",
-    name: "Macbook",
-    price: 3000,
-    quantity: 4,
-    stock: 10,
-  },
-];
-const subtotal = 4000;
-const tax = Math.round(subtotal * 0.18);
-const shippingCharges = 200;
-const discount = 400;
-const total = subtotal + tax + shippingCharges;
+import { useSelector } from "react-redux";
+import { CartReducerInitialState } from "../types/reducer-types";
 
 const Cart = () => {
+  const { cartItems, subtotal, tax, total, shippingCharges, discount } =
+    useSelector(
+      (state: { cartReducer: CartReducerInitialState }) => state.cartReducer
+    );
+
   const [couponCode, setCouponCode] = useState<string>("");
   const [isValidCouponCode, setisValidCouponCode] = useState<boolean>(false);
 
